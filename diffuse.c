@@ -5,34 +5,50 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 int height = 5 , width = 5 ;
+
+int random_range(int min , int max)
+{
+  int r ;
+
+  r = rand() % (max - min) + min ;
+
+  return r ;
+
+}
 
 void nearanother(int x , int y , char **grid , int height , int width)
 {
   int i , j , nx , ny ;
 
   //printf("x = %d , y = %d\n" , x , y);
-  grid[x][y] = '+';
-
-  for(i = -1 ; i <=1 ; i++)
+  if(grid[x][y] == '*')
   {
-    for(j = -1 ; j <= 1 ; j++)
+    grid[x][y] = '+';
+
+    for(i = -1 ; i <=1 ; i++)
     {
-      if(i == 0 && j == 0) continue ;
-
-      nx = x + i ;
-      ny = y + j ;
-      nx = (nx < 0) ? 0 : (nx > height) ? height : nx ;
-      ny = (ny < 0) ? 0 : (ny > width) ? width : ny ;
-
-      if(grid[nx][ny] == '*')
+      for(j = -1 ; j <= 1 ; j++)
       {
-        grid[nx][ny] = '^' ;
-      }
+        if(i == 0 && j == 0) continue ;
 
-    } /* for(j = -1  */
-  } /* for(i = -1  */
+        nx = x + i ;
+        ny = y + j ;
+        nx = (nx < 0) ? 0 : (nx > height) ? height : nx ;
+        ny = (ny < 0) ? 0 : (ny > width) ? width : ny ;
+
+        if(grid[nx][ny] == '*')
+        {
+          grid[nx][ny] = '^' ;
+        }
+
+      } /*  for(j = -1   */
+    } /*  for(i = -1   */
+
+  } /*  if(grid[x][y] == '*')  */
+
 }
 
 void plot(char **grid , int height , int width)
@@ -56,7 +72,10 @@ void plot(char **grid , int height , int width)
 int main(int argc , char **argv)
 {
   int i , j ;
+  int a , b ;
   char **grid ;
+
+  srand((unsigned)time(NULL));
 
   grid = malloc(sizeof(char *) * height);
   for(i = 0 ; i < height ; i++)
@@ -85,7 +104,21 @@ int main(int argc , char **argv)
 
         */
 
-      if(random() % 2 == 1)
+
+      /* 2016.07.12 am 00:20 . 
+
+         For long time , it fails for randoming here . Old code :
+
+         srand((unsigned)time(NULL));
+         random() % 2  ...
+
+         At the moment , I modified it as :
+
+         srand((unsigned)time(NULL));
+         rand() % 2  ...
+
+       */
+      if(rand() % 2 == 1)
         grid[i][j] = '*' ;
       else
         grid[i][j] = ' ';
@@ -96,12 +129,11 @@ int main(int argc , char **argv)
   plot(grid , height , width);
   printf("---------\n");
 
-  //grid[2][3] = '+';
-  //plot(grid , height , width);
-  //printf("--------\n");
-
-  //nearanother(2 , 3 , grid , height , width);
-  //plot(grid , height , width);
+  a = random_range(0 , height - 1) ;
+  b = random_range(0 , width - 1) ;
+  printf("%d , %d\n" , a , b);
+  nearanother(a , b , grid , height , width);
+  plot(grid , height , width);
 
   printf("diffuse finish\n");
   exit(1);
