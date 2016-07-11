@@ -109,11 +109,13 @@ int main(int argc , char **argv)
 
          For long time , it fails for randoming here . Old code :
 
+         #include <time.h>
          srand((unsigned)time(NULL));
          random() % 2  ...
 
          At the moment , I modified it as :
 
+         #include <time.h>
          srand((unsigned)time(NULL));
          rand() % 2  ...
 
