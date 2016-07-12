@@ -6,8 +6,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 int height = 5 , width = 5 ;
+int option_length = 2 ;
+
+typedef struct option
+{
+  char *name ;
+  int *ptr ;
+} option ;
+
+option options[] = {
+  { "-height" , &height } ,
+  { "-width"  , &width  } ,
+} ;
 
 int random_range(int min , int max)
 {
@@ -48,7 +61,10 @@ void nearanother(int x , int y , char **grid , int height , int width)
     } /*  for(i = -1   */
 
   } /*  if(grid[x][y] == '*')  */
-
+  else
+  {
+    printf("no mark\n");
+  }
 }
 
 void plot(char **grid , int height , int width)
@@ -74,8 +90,33 @@ int main(int argc , char **argv)
   int i , j ;
   int a , b ;
   char **grid ;
+  int ar , found , opf ;
 
   srand((unsigned)time(NULL));
+
+  ar = 1 ;
+  while(ar < argc)
+  {
+    found = 0 , opf = 0 ;
+    while((!found) && (opf <= option_length - 1))
+    {
+      if(strcmp(argv[ar] , options[opf].name) == 0)
+      {
+        found = 1 ;
+        *(int *)options[opf].ptr = atoi(argv[ar + 1]) ;
+        ar += 2 ;
+        break ;
+      }
+
+      opf++ ;
+
+    } /*  while((!found) ...  */
+
+    if(!found)
+      ar++ ;
+
+  } /*  while(ar < argc)  */
+
 
   grid = malloc(sizeof(char *) * height);
   for(i = 0 ; i < height ; i++)
