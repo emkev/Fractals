@@ -1,6 +1,5 @@
 
 /* 2016.05.11 pm 23:54 , 
-
 */
 
 #include <stdio.h>
@@ -9,17 +8,26 @@
 #include <string.h>
 
 int height = 5 , width = 5 ;
-int option_length = 2 ;
+int option_length = 4 ;
+int posx = 0 , posy = 0 ;
+
+typedef enum opt_type
+{
+  opt_int , opt_double , opt_string
+} opt_type ;
 
 typedef struct option
 {
   char *name ;
+  opt_type type ;
   int *ptr ;
 } option ;
 
 option options[] = {
-  { "-height" , &height } ,
-  { "-width"  , &width  } ,
+  { "-height" , opt_int , &height } ,
+  { "-width"  , opt_int , &width  } ,
+  { "-posx"   , opt_int , &posx   } ,
+  { "-posy"   , opt_int , &posy   }
 } ;
 
 int random_range(int min , int max)
@@ -94,6 +102,10 @@ int main(int argc , char **argv)
 
   srand((unsigned)time(NULL));
 
+  //posx = random_range(0 , width - 1) ;
+  //posy = random_range(0 , height - 1) ;
+  //printf("signal p , %d , %d\n" , posx , posy);
+
   ar = 1 ;
   while(ar < argc)
   {
@@ -102,10 +114,26 @@ int main(int argc , char **argv)
     {
       if(strcmp(argv[ar] , options[opf].name) == 0)
       {
-        found = 1 ;
-        *(int *)options[opf].ptr = atoi(argv[ar + 1]) ;
-        ar += 2 ;
-        break ;
+        switch(options[opf].type)
+	{
+	case opt_int :
+          found = 1 ;
+          *(int *)options[opf].ptr = atoi(argv[ar + 1]) ;
+          ar += 2 ;
+          break ;
+	case opt_double :
+          found = 1 ;
+          *(double *)options[opf].ptr = atof(argv[ar + 1]) ;
+          ar += 2 ;
+          break ;
+	case opt_string :
+          found = 1 ;
+          *(char **)options[opf].ptr = argv[ar + 1] ;
+          ar += 2 ;
+          break ;
+        default :
+          break ;
+	}
       }
 
       opf++ ;
@@ -117,6 +145,7 @@ int main(int argc , char **argv)
 
   } /*  while(ar < argc)  */
 
+  printf("signal p-o , %d , %d\n" , posx , posy);
 
   grid = malloc(sizeof(char *) * height);
   for(i = 0 ; i < height ; i++)
@@ -172,10 +201,11 @@ int main(int argc , char **argv)
   plot(grid , height , width);
   printf("---------\n");
 
-  a = random_range(0 , height - 1) ;
-  b = random_range(0 , width - 1) ;
-  printf("%d , %d\n" , a , b);
-  nearanother(a , b , grid , height , width);
+  //a = random_range(0 , height - 1) ;
+  //b = random_range(0 , width - 1) ;
+  printf("(%d , %d)\n" , posx + 1 , posy + 1) ;
+  /*  (x , y) need to exchanged input to functions   */
+  nearanother(posy , posx , grid , height , width);
   plot(grid , height , width);
 
   printf("diffuse finish\n");
