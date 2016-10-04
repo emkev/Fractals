@@ -8,8 +8,12 @@
 #include <string.h>
 
 int height = 5 , width = 5 ;
+/* !!!! option_length ===== speical setting !!!!! */
 int option_length = 4 ;
 int posx = 0 , posy = 0 ;
+
+/* 2016.10.04 , add the help informations for using friendly  */
+char *help_string = "running options :  -heigth  -width  -posx  -posy";
 
 typedef enum opt_type
 {
@@ -37,6 +41,31 @@ int random_range(int min , int max)
   r = rand() % (max - min) + min ;
 
   return r ;
+
+}
+
+int another(int x , int y , char **grid)
+{
+  int nx , ny , i , j ;
+
+  for(i = -1 ; i <= 1 ; i++)
+  {
+    for(j = -1 ; j <= 1 ; j++)
+    {
+      if(i == 0 && j == 0) continue ;
+
+      nx = x + i ;
+      ny = y + i ;
+
+      nx = (nx < 0) ? (width - 1) : ((nx > width - 1) ? 0 : nx) ;
+      ny = (ny < 0) ? (height - 1) : ((ny > height - 1) ? 0 : ny) ;
+
+      if(grid[nx][ny]) 
+        return(1);
+    } /*  for(j = -1 ; j <= 1 ; j++)  */
+  } /*  for(i = -1 ; i <= 1 ; i++)  */
+
+  return(0);
 
 }
 
@@ -112,7 +141,13 @@ int main(int argc , char **argv)
     found = 0 , opf = 0 ;
     while((!found) && (opf <= option_length - 1))
     {
-      if(strcmp(argv[ar] , options[opf].name) == 0)
+      /* 2016.10.04 and 10.05 , add the help informations */
+      if(strcmp(argv[ar] , "-help") == 0)
+      {
+        printf("%s\n" , help_string);
+        exit(1);
+      }
+      else if(strcmp(argv[ar] , options[opf].name) == 0)
       {
         switch(options[opf].type)
 	{
@@ -144,6 +179,7 @@ int main(int argc , char **argv)
       ar++ ;
 
   } /*  while(ar < argc)  */
+
 
   printf("signal p-o , %d , %d\n" , posx , posy);
 
